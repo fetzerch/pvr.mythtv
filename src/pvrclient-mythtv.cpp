@@ -1597,6 +1597,14 @@ PVR_ERROR PVRClientMythTV::GetTimers(ADDON_HANDLE handle)
     // Add it to memorandom: cf UpdateTimer()
     MYTH_SHARED_PTR<PVR_TIMER> pTag = MYTH_SHARED_PTR<PVR_TIMER>(new PVR_TIMER(tag));
     m_PVRtimerMemorandum.insert(std::make_pair((unsigned int&)tag.iClientIndex, pTag));
+
+    if (tag.iTimerType > 9 && tag.iClientChannelUid == PVR_CHANNEL_INVALID_UID)
+    {
+      XBMC->Log(LOG_NOTICE, "%s: !!!WARNING!!! #%u: type %u state %d parent %u chanid %u", __FUNCTION__,
+              tag.iClientIndex, tag.iTimerType, (int)tag.state, tag.iParentClientIndex, (*it)->chanid);
+      continue;
+    }
+
     PVR->TransferTimerEntry(handle, &tag);
     if (g_bExtraDebug)
       XBMC->Log(LOG_DEBUG, "%s: #%u: IN=%d RS=%d type %u state %d parent %u autoexpire %d", __FUNCTION__,
